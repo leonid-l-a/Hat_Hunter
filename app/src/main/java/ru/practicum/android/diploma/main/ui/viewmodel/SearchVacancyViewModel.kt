@@ -196,6 +196,7 @@ class SearchVacancyViewModel(
     }
 
     fun repeatRequest() {
+        resetPages()
         searchRequestText(expression = latestRequestText ?: "", shouldRepeat = true)
     }
 }
