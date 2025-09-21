@@ -26,7 +26,7 @@ fun SearchFilterItems(
         onValueChange = onSearchHandler,
         placeholder = {
             Text(
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onTertiary,
                 text = placeholder,
                 style = MaterialTheme.typography.bodyLarge,
             )
