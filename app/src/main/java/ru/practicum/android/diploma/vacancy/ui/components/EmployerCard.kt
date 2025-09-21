@@ -62,11 +62,14 @@ fun EmployerCard(vacancy: VacancyDetail) {
                     color = whiteNight
                 )
                 Text(
-                    text = vacancy.addressCity,
+                    text = vacancy.fullAddress
+                        .takeIf { it.isNotBlank() }
+                        ?: vacancy.areaName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = whiteNight
                 )
+
             }
         }
     }
