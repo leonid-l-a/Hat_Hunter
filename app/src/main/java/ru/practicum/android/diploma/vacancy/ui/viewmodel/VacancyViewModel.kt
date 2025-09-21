@@ -19,6 +19,7 @@ class VacancyViewModel(
     private val favoritesInteractor: FavoritesInteractor,
     private val networkUtil: NetworkUtil,
 ) : ViewModel() {
+
     private val _state = MutableStateFlow<VacancyState>(VacancyState.Loading)
     val state: StateFlow<VacancyState> = _state
 
@@ -29,26 +30,24 @@ class VacancyViewModel(
     }
 
     private fun loadVacancy() {
-        if (!networkUtil.isInternetAvailable()) {
-            _state.value = VacancyState.Error
-            return
-        }
-
         viewModelScope.launch {
-            val vacancyDetail = vacancyDetailUseCase.getVacancyDetail(vacancyId)
-            _state.value = VacancyState.Success(vacancyDetail, false)
-            checkInFavorites()
-        }
-    }
-
-    fun checkInFavorites() {
-        val currentState = _state.value
-        if (currentState is VacancyState.Success) {
-            viewModelScope.launch {
-                val vacancy = currentState.vacancyDetail
-                val existing = favoritesInteractor.findFavoriteVacancy(vacancy.id)
-                _state.value = currentState.copy(isFavorite = existing != null)
+            val localVacancy = favoritesInteractor.findFavoriteVacancyForVacancyScreen(vacancyId)
+            if (localVacancy != null) {
+                _state.value = VacancyState.Success(localVacancy, isFavorite = true)
+                return@launch
             }
+
+            if (!networkUtil.isInternetAvailable()) {
+                _state.value = VacancyState.Error
+                return@launch
+            }
+
+            val vacancyDetail = vacancyDetailUseCase.getVacancyDetail(vacancyId)
+            val existing = favoritesInteractor.findFavoriteVacancyForFavoriteScreen(vacancyId)
+            _state.value = VacancyState.Success(
+                vacancyDetail,
+                isFavorite = existing != null
+            )
         }
     }
 
@@ -57,7 +56,7 @@ class VacancyViewModel(
         if (currentState is VacancyState.Success) {
             viewModelScope.launch {
                 val vacancy = currentState.vacancyDetail
-                val existing = favoritesInteractor.findFavoriteVacancy(vacancy.id)
+                val existing = favoritesInteractor.findFavoriteVacancyForFavoriteScreen(vacancy.id)
                 if (existing != null) {
                     favoritesInteractor.deleteFromFavorites(vacancy)
                     _state.value = currentState.copy(isFavorite = false)
@@ -70,12 +69,11 @@ class VacancyViewModel(
     }
 
     fun shareVacancyWithMessenger(): Intent? {
-        val intent = Intent().apply {
+        return Intent.createChooser(Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, vacancyId)
             type = "text/plain"
-        }
-        return Intent.createChooser(intent, null)
+        }, null)
     }
 
     fun writeWithMail(): Intent? {
