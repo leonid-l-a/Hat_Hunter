@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.sqlite.SQLiteException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.favorites.domain.interactor.FavoritesInteractor
 import ru.practicum.android.diploma.favorites.ui.state.FavoriteState
@@ -26,23 +27,21 @@ class FavoritesViewModel(
 
     init {
         viewModelScope.launch {
-            try {
-                favoritesInteractor.getFavoritesVacancy().collect { favorites ->
-                    val nonNullFavorites = favorites.filterNotNull()
-
-                    when (nonNullFavorites.isEmpty()) {
-                        true -> {
-                            _stateFavoritesVacancy.value = FavoriteState.Empty
-                        }
-
-                        false -> {
-                            _stateFavoritesVacancy.value = FavoriteState.Content(nonNullFavorites)
-                        }
+            favoritesInteractor.getFavoritesVacancy()
+                .catch { e ->
+                    if (e is SQLiteException) {
+                        _stateFavoritesVacancy.value = FavoriteState.Error(e.message)
+                    } else {
+                        throw e
                     }
                 }
-            } catch (e: SQLiteException) {
-                _stateFavoritesVacancy.value = FavoriteState.Error(e.message)
-            }
+                .collect { favorites ->
+                    val nonNullFavorites = favorites.filterNotNull()
+                    _stateFavoritesVacancy.value = when {
+                        nonNullFavorites.isEmpty() -> FavoriteState.Empty
+                        else -> FavoriteState.Content(nonNullFavorites)
+                    }
+                }
         }
     }
 
