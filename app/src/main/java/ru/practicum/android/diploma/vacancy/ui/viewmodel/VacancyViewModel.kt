@@ -29,6 +29,7 @@ class VacancyViewModel(
         loadVacancy()
     }
 
+    @Suppress("LabeledExpression")
     private fun loadVacancy() {
         viewModelScope.launch {
             val localVacancy = favoritesInteractor.findFavoriteVacancyForVacancyScreen(vacancyId)
