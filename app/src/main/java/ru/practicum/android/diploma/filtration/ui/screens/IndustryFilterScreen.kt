@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import ru.practicum.android.diploma.R
@@ -33,6 +34,7 @@ import ru.practicum.android.diploma.core.ui.components.ErrorResult
 import ru.practicum.android.diploma.core.ui.components.FilterButton
 import ru.practicum.android.diploma.core.ui.components.FilterItem
 import ru.practicum.android.diploma.core.ui.components.FilterParams
+import ru.practicum.android.diploma.core.ui.theme.ApplicationTheme
 import ru.practicum.android.diploma.core.ui.theme.Height24
 import ru.practicum.android.diploma.core.ui.theme.Height60
 import ru.practicum.android.diploma.core.ui.theme.WrapperPaddingHorizontal16
@@ -68,6 +70,7 @@ fun IndustryFilterScreen(
             var text by rememberSaveable { mutableStateOf("") }
             SearchFilterItems(
                 text = text,
+                placeholder = stringResource(R.string.search_industry_placeholder),
                 onSearchHandler = {
                     text = it
                     industryVm.filerItems(text)
@@ -201,4 +204,12 @@ private fun ShowError(
         textRes = textRes,
         painterRes = painterRes
     )
+}
+
+@Preview
+@Composable
+fun IndustryFilterPreview() {
+    ApplicationTheme {
+        IndustryFilterScreen()
+    }
 }

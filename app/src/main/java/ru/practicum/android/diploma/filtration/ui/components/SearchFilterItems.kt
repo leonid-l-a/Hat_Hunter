@@ -7,7 +7,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.ui.components.SearchBar
@@ -16,6 +15,7 @@ import ru.practicum.android.diploma.core.ui.theme.blackUniversal
 @Composable
 fun SearchFilterItems(
     text: String,
+    placeholder: String,
     modifier: Modifier = Modifier,
     onSearchHandler: (String) -> Unit = {},
     onResetRequest: () -> Unit = {}
@@ -27,7 +27,7 @@ fun SearchFilterItems(
         placeholder = {
             Text(
                 color = MaterialTheme.colorScheme.onSurface,
-                text = stringResource(R.string.search_region_placeholder),
+                text = placeholder,
                 style = MaterialTheme.typography.bodyLarge,
             )
         },

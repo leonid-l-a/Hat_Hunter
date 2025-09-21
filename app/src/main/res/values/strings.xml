@@ -80,6 +80,7 @@
     <string name="filter_add">Выбрать</string>
     <string name="filter_reset">Сбросить</string>
     <string name="choose_industry">Выбор отрасли</string>
+    <string name="search_industry_placeholder">Введите отрасль</string>
     <string name="choose_industry_not_exist">Такой индустрии нет</string>
 
     <string name="server_error_text">Ошибка сервера</string>
