@@ -10,7 +10,9 @@ interface FavoritesInteractor {
 
     suspend fun addFavoriteVacancy(vacancy: VacancyDetail): Long
 
-    suspend fun findFavoriteVacancy(id: String): VacancyFavorites?
+    suspend fun findFavoriteVacancyForFavoriteScreen(id: String): VacancyFavorites?
 
     suspend fun deleteFromFavorites(vacancy: VacancyDetail)
+
+    suspend fun findFavoriteVacancyForVacancyScreen(id: String): VacancyDetail?
 }
