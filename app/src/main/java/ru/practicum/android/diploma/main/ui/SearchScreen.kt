@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.main.ui
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -164,8 +165,9 @@ private fun ShowContent(
 ) {
     val searchState by viewModel.stateSearchVacancy.collectAsState()
     val shouldRepeatRequest by viewModel.shouldRepeatRequest.collectAsState()
-    var errorWasShown by remember { mutableStateOf(false) }
+    var wasErrorShown by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
     LaunchedEffect(shouldRepeatRequest) {
         if (shouldRepeatRequest) {
             viewModel.repeatRequest()
@@ -174,19 +176,15 @@ private fun ShowContent(
     }
     LaunchedEffect(searchState) {
         if (searchState is SearchState.Content) {
-            errorWasShown = false
+            wasErrorShown = false
         }
     }
-    LaunchedEffect(key1 = (searchState as? SearchState.Content)?.isLazyError) {
+    LaunchedEffect(key1 = (searchState as? SearchState.Content)?.statusContent) {
         if (searchState is SearchState.Content) {
-            val stateContent = searchState as SearchState.Content
-            if (stateContent.isLazyError && !errorWasShown) {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.check_internet),
-                    Toast.LENGTH_SHORT
-                ).show()
-                errorWasShown = true
+            val state = searchState as SearchState.Content
+            if (state.statusContent.isLoading && !wasErrorShown) {
+                Toast.makeText(context, context.getString(R.string.check_internet), Toast.LENGTH_SHORT).show()
+                wasErrorShown = true
             }
         }
     }

@@ -14,6 +14,7 @@ import ru.practicum.android.diploma.main.domain.model.VacancyMainData
 import ru.practicum.android.diploma.main.domain.state.Resource
 import ru.practicum.android.diploma.main.ui.mapper.FilterRequestMapper
 import ru.practicum.android.diploma.main.ui.model.FilterRequest
+import ru.practicum.android.diploma.main.ui.model.StatusContent
 import ru.practicum.android.diploma.main.ui.model.Vacancy
 import ru.practicum.android.diploma.main.ui.state.SearchState
 import ru.practicum.android.diploma.main.util.getFormatSalary
@@ -43,9 +44,8 @@ class SearchVacancyViewModel(
 
     private val _shouldRepeatRequest = MutableStateFlow(value = false)
     val shouldRepeatRequest = _shouldRepeatRequest.asStateFlow()
-
     private val _vacancies = mutableListOf<Vacancy>()
-    val vacancies: List<Vacancy> get() = _vacancies
+    private val vacancies: List<Vacancy> get() = _vacancies
 
     init {
         viewModelScope.launch {
@@ -189,7 +189,7 @@ class SearchVacancyViewModel(
                                 vacancy = vacancies,
                                 countVacancy = lastState.countVacancy,
                                 isLoadingNextPage = false,
-                                isLazyError = true
+                                statusContent = StatusContent(isLoading = true),
                             )
                         )
                     }
