@@ -3,11 +3,12 @@ package ru.practicum.android.diploma.main.util
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.providers.ResourceProvider
 import ru.practicum.android.diploma.main.domain.model.SalaryMainData
+import ru.practicum.android.diploma.util.getCurrencySymbolByDigitId
 
 fun SalaryMainData.getFormatSalary(provider: ResourceProvider): String {
     val formattedFrom = from?.let { formatNumber(it) } ?: ""
     val formattedTo = to?.let { formatNumber(it) } ?: ""
-    val currency = currency?.let { " $it" } ?: ""
+    val currency = currency.getCurrencySymbolByDigitId()
 
     return when {
         from != null && to != null -> provider.getString(

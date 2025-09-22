@@ -1,5 +1,7 @@
 package ru.practicum.android.diploma.favorites.utils
 
+import ru.practicum.android.diploma.util.getCurrencySymbolByDigitId
+
 private const val EMPTY_SALARY = "Зарплата не указана"
 
 fun formatSalary(salaryFrom: Int?, salaryTo: Int?, currency: String?): String {
@@ -13,9 +15,7 @@ fun formatSalary(salaryFrom: Int?, salaryTo: Int?, currency: String?): String {
         parts.add("до $salaryTo")
     }
 
-    if (!currency.isNullOrBlank()) {
-        parts.add(currency)
-    }
+    parts.add(currency.getCurrencySymbolByDigitId())
 
     return if (salaryFrom == null && salaryTo == null) {
         EMPTY_SALARY

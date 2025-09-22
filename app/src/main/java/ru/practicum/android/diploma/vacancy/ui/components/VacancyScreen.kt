@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.util.getCurrencySymbolByDigitId
 import ru.practicum.android.diploma.vacancy.domain.model.VacancyDetail
 import ru.practicum.android.diploma.vacancy.ui.state.VacancyState
 import ru.practicum.android.diploma.vacancy.ui.viewmodel.VacancyViewModel
@@ -52,11 +53,11 @@ fun VacancyScreen(viewModel: VacancyViewModel, navController: NavController) {
 fun VacancyDetail.getSalaryString(): String {
     return when {
         salaryFrom != null && salaryTo != null ->
-            "от $salaryFrom до $salaryTo ${salaryCurrency.orEmpty()}"
+            "от $salaryFrom до $salaryTo ${salaryCurrency.getCurrencySymbolByDigitId()}"
         salaryFrom != null ->
-            "от $salaryFrom ${salaryCurrency.orEmpty()}"
+            "от $salaryFrom ${salaryCurrency.getCurrencySymbolByDigitId()}"
         salaryTo != null ->
-            "до $salaryTo ${salaryCurrency.orEmpty()}"
+            "до $salaryTo ${salaryCurrency.getCurrencySymbolByDigitId()}"
         else ->
             R.string.salary_not_specified.toString()
     }
