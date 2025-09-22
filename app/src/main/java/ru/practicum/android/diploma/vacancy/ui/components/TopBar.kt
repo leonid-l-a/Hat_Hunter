@@ -44,12 +44,6 @@ fun TopBar(viewModel: VacancyViewModel, navController: NavController, state: Vac
         actions = {
             Row {
                 IconButton(onClick = {
-                    viewModel.toggleFavorite()
-                }) {
-                    Like(state)
-                }
-
-                IconButton(onClick = {
                     viewModel.shareVacancyWithMessenger()?.let { intent ->
                         context.startActivity(intent)
                     }
@@ -58,6 +52,11 @@ fun TopBar(viewModel: VacancyViewModel, navController: NavController, state: Vac
                         painter = painterResource(R.drawable.ic_share),
                         contentDescription = stringResource(R.string.share),
                     )
+                }
+                IconButton(onClick = {
+                    viewModel.toggleFavorite()
+                }) {
+                    Like(state)
                 }
             }
         }
