@@ -38,11 +38,14 @@ class SearchVacancyViewModel(
     private val _stateSearchVacancy = MutableStateFlow<SearchState>(value = SearchState.Default)
     val stateSearchVacancy = _stateSearchVacancy.asStateFlow()
 
-    private val _stateSearchFilter = MutableStateFlow<FilterRequest>(value = FilterRequest())
+    private val _stateSearchFilter = MutableStateFlow(value = FilterRequest())
     val stateSearchFilter = _stateSearchFilter.asStateFlow()
 
     private val _shouldRepeatRequest = MutableStateFlow(value = false)
     val shouldRepeatRequest = _shouldRepeatRequest.asStateFlow()
+
+    private val _vacancies = mutableListOf<Vacancy>()
+    val vacancies: List<Vacancy> get() = _vacancies
 
     init {
         viewModelScope.launch {
@@ -58,6 +61,7 @@ class SearchVacancyViewModel(
     )
 
     private fun resetPages() {
+        _vacancies.clear()
         currentPage = 1
         maxPages = 0
     }
@@ -82,7 +86,7 @@ class SearchVacancyViewModel(
                 val filter: FilterRequestData = FilterRequestMapper.toFilterRequestData(_stateSearchFilter.value)
                 searchVacancyInteractor.searchVacancy(expression, currentPage, filter)
                     .collect { vacancy ->
-                        searchState(vacancy)
+                        searchState(vacancy = vacancy)
                     }
             }
         } else {
@@ -159,11 +163,7 @@ class SearchVacancyViewModel(
                     maxPages = vacancy.pages
                 }
                 if (vacancy.items.isNotEmpty()) {
-                    var vacancies = map(vacancy.items)
-                    val state = stateSearchVacancy.value
-                    if (state is SearchState.Content) {
-                        vacancies = state.vacancy + vacancies
-                    }
+                    _vacancies.addAll(map(vacancy.items))
                     renderSearchState(
                         state = SearchState.Content(
                             vacancy = vacancies,
@@ -180,9 +180,24 @@ class SearchVacancyViewModel(
             }
 
             is Resource.Error -> {
-                renderSearchState(
-                    state = SearchState.Error
-                )
+                if (vacancy.isLazyError) {
+                    val lastState = stateSearchVacancy.value
+                    if (lastState is SearchState.Content) {
+                        lastState.countVacancy
+                        renderSearchState(
+                            state = SearchState.Content(
+                                vacancy = vacancies,
+                                countVacancy = lastState.countVacancy,
+                                isLoadingNextPage = false,
+                                isLazyError = true
+                            )
+                        )
+                    }
+                } else {
+                    renderSearchState(
+                        state = SearchState.Error
+                    )
+                }
             }
         }
     }

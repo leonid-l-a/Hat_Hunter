@@ -94,18 +94,20 @@ fun ShowVacancyList(
     isLoadingNextPage: Boolean = false,
     onClick: (String) -> Unit = {},
     onLoadNextPage: () -> Unit = {},
-    diffCount: Int = 5
+    diffCount: Int = 5,
+    preserveOnEmpty: Boolean = false
 ) {
-    if (vacancyList.isEmpty()) {
+    if (vacancyList.isEmpty() && !preserveOnEmpty) {
         return
     }
+    val dif = if (preserveOnEmpty) 1 else diffCount
     val listState = rememberLazyListState()
 
     val shouldLoadNext by remember {
         derivedStateOf {
             val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
             val totalItemsCount = listState.layoutInfo.totalItemsCount
-            lastVisibleItemIndex != null && lastVisibleItemIndex >= totalItemsCount - diffCount && !isLoadingNextPage
+            lastVisibleItemIndex != null && lastVisibleItemIndex >= totalItemsCount - dif && !isLoadingNextPage
         }
     }
 

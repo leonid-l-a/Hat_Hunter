@@ -15,17 +15,17 @@ fun SalaryMainData.getFormatSalary(provider: ResourceProvider): String {
             R.string.salary_from_to,
             formattedFrom,
             formattedTo
-        ) + currency
+        ) + " $currency"
 
         from != null -> provider.getString(
             R.string.salary_from,
             formattedFrom
-        ) + currency
+        ) + " $currency"
 
         to != null -> provider.getString(
             R.string.salary_to,
             formattedTo
-        ) + currency
+        ) + " $currency"
 
         else -> provider.getString(R.string.salary_not_marked)
     }

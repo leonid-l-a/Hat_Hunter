@@ -27,7 +27,7 @@ class SearchVacancyRepositoryImpl(
         flow {
             if (!networkUtil.isInternetAvailable()) {
                 emit(
-                    Resource.Error()
+                    Resource.Error(isLazyError = page > 1)
                 )
             } else {
                 val vacancyRequest = VacancyRequest(

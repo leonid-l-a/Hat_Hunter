@@ -9,7 +9,8 @@ sealed class SearchState {
     data class Content(
         val vacancy: List<Vacancy>,
         val countVacancy: Int? = null,
-        val isLoadingNextPage: Boolean = false
+        val isLoadingNextPage: Boolean = false,
+        val isLazyError: Boolean = false
     ) : SearchState()
 
     data object Empty : SearchState()
