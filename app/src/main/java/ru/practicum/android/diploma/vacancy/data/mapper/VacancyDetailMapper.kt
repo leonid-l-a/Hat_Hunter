@@ -37,4 +37,3 @@ fun VacancyDetailDto.toDomain(): VacancyDetail {
         industryName = industry.name
     )
 }
-

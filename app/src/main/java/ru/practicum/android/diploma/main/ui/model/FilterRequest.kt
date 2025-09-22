@@ -9,4 +9,3 @@ data class FilterRequest(
     val isEmpty: Boolean
         get() = areaId == null && industryId == null && salaryId == null && withSalary == null
 }
-
