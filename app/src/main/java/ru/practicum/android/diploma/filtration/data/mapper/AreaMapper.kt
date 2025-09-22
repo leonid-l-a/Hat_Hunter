@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.filtration.domain.mapper
+package ru.practicum.android.diploma.filtration.data.mapper
 
 import ru.practicum.android.diploma.core.data.dto.FilterAreasResponse
 import ru.practicum.android.diploma.filtration.domain.model.Country
