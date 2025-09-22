@@ -8,24 +8,24 @@ import ru.practicum.android.diploma.util.getCurrencySymbolByDigitId
 fun SalaryMainData.getFormatSalary(provider: ResourceProvider): String {
     val formattedFrom = from?.let { formatNumber(it) } ?: ""
     val formattedTo = to?.let { formatNumber(it) } ?: ""
-    val currency = currency.getCurrencySymbolByDigitId()
+    val currency = " ${currency.getCurrencySymbolByDigitId()}"
 
     return when {
         from != null && to != null -> provider.getString(
             R.string.salary_from_to,
             formattedFrom,
             formattedTo
-        ) + " $currency"
+        ) + currency
 
         from != null -> provider.getString(
             R.string.salary_from,
             formattedFrom
-        ) + " $currency"
+        ) + currency
 
         to != null -> provider.getString(
             R.string.salary_to,
             formattedTo
-        ) + " $currency"
+        ) + currency
 
         else -> provider.getString(R.string.salary_not_marked)
     }

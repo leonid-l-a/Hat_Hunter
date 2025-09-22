@@ -197,7 +197,6 @@ private fun ShowContent(
         }
 
         is SearchState.Error -> {
-
             ErrorResult(
                 textRes = R.string.no_connection,
                 painterRes = R.drawable.no_connection
