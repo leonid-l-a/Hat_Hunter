@@ -1,6 +1,6 @@
 package ru.practicum.android.diploma.filtration.domain.interactor
 
-import ru.practicum.android.diploma.filtration.domain.mapper.AreaMapper
+import ru.practicum.android.diploma.filtration.data.mapper.AreaMapper
 import ru.practicum.android.diploma.filtration.domain.model.Country
 import ru.practicum.android.diploma.filtration.domain.model.Region
 import ru.practicum.android.diploma.filtration.domain.repository.AreaRepository
