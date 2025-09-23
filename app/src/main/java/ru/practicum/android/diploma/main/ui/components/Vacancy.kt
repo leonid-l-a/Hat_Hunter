@@ -94,7 +94,7 @@ fun ShowVacancyList(
     isLoadingNextPage: Boolean = false,
     onClick: (String) -> Unit = {},
     onLoadNextPage: () -> Unit = {},
-    diffCount: Int = 5
+    diffCount: Int = 5,
 ) {
     if (vacancyList.isEmpty()) {
         return
@@ -108,7 +108,6 @@ fun ShowVacancyList(
             lastVisibleItemIndex != null && lastVisibleItemIndex >= totalItemsCount - diffCount && !isLoadingNextPage
         }
     }
-
     LaunchedEffect(shouldLoadNext) {
         if (shouldLoadNext) {
             onLoadNextPage()

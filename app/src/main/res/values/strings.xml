@@ -85,4 +85,5 @@
 
     <string name="server_error_text">Ошибка сервера</string>
     <string name="not_show_without_salary">Не показывать без зарплаты</string>
+    <string name="check_internet">Проверьте подключение к интернету</string>
 </resources>
