@@ -45,7 +45,6 @@ class FavoritesViewModel(
         }
     }
 
-
     fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
