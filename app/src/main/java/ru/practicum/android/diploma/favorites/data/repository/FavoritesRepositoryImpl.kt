@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.favorites.data.repository
 
+import android.database.sqlite.SQLiteException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -36,7 +37,7 @@ class FavoritesRepositoryImpl(
             Result.Success(id)
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (e: SQLiteException) {
             Result.Error(e.message)
         }
     }
@@ -47,7 +48,7 @@ class FavoritesRepositoryImpl(
             Result.Success(VacancyDbMapper.favoritesEntityToVacancyFavorites(entity))
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (e: SQLiteException) {
             Result.Error(e.message)
         }
     }
@@ -58,7 +59,7 @@ class FavoritesRepositoryImpl(
             Result.Success(Unit)
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (e: SQLiteException) {
             Result.Error(e.message)
         }
     }
@@ -70,7 +71,7 @@ class FavoritesRepositoryImpl(
             Result.Success(vacancy)
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (e: SQLiteException) {
             Result.Error(e.message)
         }
     }
