@@ -2,17 +2,18 @@ package ru.practicum.android.diploma.favorites.domain.interactor
 
 import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.favorites.domain.model.VacancyFavorites
+import ru.practicum.android.diploma.favorites.domain.state.Result
 import ru.practicum.android.diploma.vacancy.domain.model.VacancyDetail
 
 interface FavoritesInteractor {
 
-    fun getFavoritesVacancy(): Flow<List<VacancyFavorites?>>
+    fun getFavoritesVacancy(): Flow<Result<List<VacancyFavorites?>>>
 
-    suspend fun addFavoriteVacancy(vacancy: VacancyDetail): Long
+    suspend fun addFavoriteVacancy(vacancy: VacancyDetail): Result<Long>
 
-    suspend fun findFavoriteVacancyForFavoriteScreen(id: String): VacancyFavorites?
+    suspend fun findFavoriteVacancyForFavoriteScreen(id: String): Result<VacancyFavorites?>
 
-    suspend fun deleteFromFavorites(vacancy: VacancyDetail)
+    suspend fun deleteFromFavorites(vacancy: VacancyDetail): Result<Unit>
 
-    suspend fun findFavoriteVacancyForVacancyScreen(id: String): VacancyDetail?
+    suspend fun findFavoriteVacancyForVacancyScreen(id: String): Result<VacancyDetail?>
 }

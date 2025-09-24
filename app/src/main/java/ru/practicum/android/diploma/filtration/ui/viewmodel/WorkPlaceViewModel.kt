@@ -40,19 +40,19 @@ class WorkPlaceViewModel(
     }
 
     fun clearCountry() {
-        appInteractor.saveData(StorageKey.COUNTRY_NAME_KEY, "")
+        appInteractor.clearByKey(StorageKey.COUNTRY_NAME_KEY)
         if (_regionName.value.isBlank()) {
-            appInteractor.saveData(StorageKey.AREA_ID_KEY, "")
+            appInteractor.clearByKey(StorageKey.AREA_ID_KEY)
         }
-        appInteractor.saveData(StorageKey.REGION_NAME_KEY, "")
-        appInteractor.saveData(StorageKey.COUNTRY_ID_KEY, "")
+        appInteractor.clearByKey(StorageKey.REGION_NAME_KEY)
+        appInteractor.clearByKey(StorageKey.COUNTRY_ID_KEY)
     }
 
     fun clearRegion() {
-        appInteractor.saveData(StorageKey.REGION_NAME_KEY, "")
+        appInteractor.clearByKey(StorageKey.REGION_NAME_KEY)
         if (_countryName.value.isBlank()) {
-            appInteractor.saveData(StorageKey.AREA_ID_KEY, "")
+            appInteractor.clearByKey(StorageKey.AREA_ID_KEY)
         }
-        appInteractor.saveData(StorageKey.REGION_ID_KEY, "")
+        appInteractor.clearByKey(StorageKey.REGION_ID_KEY)
     }
 }

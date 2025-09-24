@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.favorites.domain.interactor.FavoritesInteractor
+import ru.practicum.android.diploma.favorites.domain.state.Result
 import ru.practicum.android.diploma.util.NetworkUtil
 import ru.practicum.android.diploma.vacancy.domain.interactor.VacancyDetailUseCase
 import ru.practicum.android.diploma.vacancy.ui.state.VacancyState
@@ -33,8 +34,8 @@ class VacancyViewModel(
     private fun loadVacancy() {
         viewModelScope.launch {
             val localVacancy = favoritesInteractor.findFavoriteVacancyForVacancyScreen(vacancyId)
-            if (localVacancy != null) {
-                _state.value = VacancyState.Success(localVacancy, isFavorite = true)
+            if (localVacancy is Result.Success && localVacancy.data != null) {
+                _state.value = VacancyState.Success(localVacancy.data, isFavorite = true)
                 return@launch
             }
 
@@ -47,7 +48,7 @@ class VacancyViewModel(
             val existing = favoritesInteractor.findFavoriteVacancyForFavoriteScreen(vacancyId)
             _state.value = VacancyState.Success(
                 vacancyDetail,
-                isFavorite = existing != null
+                isFavorite = existing is Result.Success && existing.data != null
             )
         }
     }
@@ -58,7 +59,7 @@ class VacancyViewModel(
             viewModelScope.launch {
                 val vacancy = currentState.vacancyDetail
                 val existing = favoritesInteractor.findFavoriteVacancyForFavoriteScreen(vacancy.id)
-                if (existing != null) {
+                if (existing is Result.Success && existing.data != null) {
                     favoritesInteractor.deleteFromFavorites(vacancy)
                     _state.value = currentState.copy(isFavorite = false)
                 } else {
