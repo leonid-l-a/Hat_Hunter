@@ -82,22 +82,42 @@ fun WorkPlaceSelector(
             modifier = Modifier.padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            FilterItem(
-                labelText = countryLabel.takeIf { !it.isNullOrBlank() } ?: stringResource(R.string.country),
+            WorkPlaceFilterItem(
+                text = stringResource(R.string.country),
+                value = countryLabel ?: "",
                 checked = countryChecked,
-                isMainField = true,
                 onClick = { onCountryClick() },
                 onClear = onCountryClear
-            ) { checked -> ActionIcon(checked) }
+            )
 
-            FilterItem(
-                labelText = regionLabel.takeIf { !it.isNullOrBlank() } ?: stringResource(R.string.region),
+            WorkPlaceFilterItem(
+                text = stringResource(R.string.region),
+                value = regionLabel ?: "",
                 checked = regionChecked,
-                isMainField = true,
                 onClick = { onRegionClick() },
                 onClear = onRegionClear
-            ) { checked -> ActionIcon(checked) }
+            )
         }
+    }
+}
+
+@Composable
+private fun WorkPlaceFilterItem(
+    text: String,
+    value: String,
+    checked: Boolean,
+    onClick: (String?) -> Unit,
+    onClear: () -> Unit
+) {
+    FilterItem(
+        labelText = text,
+        labelValue = value,
+        checked = checked,
+        isMainField = true,
+        onClick = onClick,
+        onClear = onClear
+    ) { isChecked ->
+        ActionIcon(isChecked)
     }
 }
 
