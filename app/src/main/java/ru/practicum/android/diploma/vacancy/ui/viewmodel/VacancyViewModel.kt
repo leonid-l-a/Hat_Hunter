@@ -48,7 +48,7 @@ class VacancyViewModel(
             val existing = favoritesInteractor.findFavoriteVacancyForFavoriteScreen(vacancyId)
             _state.value = VacancyState.Success(
                 vacancyDetail,
-                isFavorite = existing is Result.Success
+                isFavorite = existing is Result.Success && existing.data != null
             )
         }
     }
