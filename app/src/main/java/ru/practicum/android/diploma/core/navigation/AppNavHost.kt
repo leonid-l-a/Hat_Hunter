@@ -95,7 +95,7 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
             )
         ) { backStackEntry ->
             val countryIdString = backStackEntry.arguments?.getString("countryId")
-            val countryId = countryIdString?.toIntOrNull() // вот оно — nullable Int
+            val countryId = countryIdString?.toIntOrNull()
             val viewModel: RegionSelectionViewModel = koinViewModel()
             RegionSelectionScreen(
                 viewModel = viewModel,

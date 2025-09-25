@@ -14,12 +14,13 @@ import ru.practicum.android.diploma.filtration.domain.interactor.GetAreasUseCase
 import ru.practicum.android.diploma.filtration.domain.model.Country
 import ru.practicum.android.diploma.filtration.domain.state.Result
 import ru.practicum.android.diploma.filtration.ui.state.CountrySelectionScreenState
+import ru.practicum.android.diploma.util.NetworkUtil
 
 class CountrySelectionViewModel(
     private val getAreasUseCase: GetAreasUseCase,
     private val appInteractor: AppInteractor,
+    private val networkUtil: NetworkUtil,
 ) : ViewModel() {
-
     private val _screenState = MutableStateFlow<CountrySelectionScreenState>(CountrySelectionScreenState.Loading)
     val screenState = _screenState.asStateFlow()
 
@@ -28,6 +29,10 @@ class CountrySelectionViewModel(
     }
 
     fun loadData() {
+        if (!networkUtil.isInternetAvailable()) {
+            _screenState.value = CountrySelectionScreenState.Error
+            return
+        }
         viewModelScope.launch {
             try {
                 when (val result = getAreasUseCase()) {
@@ -51,7 +56,7 @@ class CountrySelectionViewModel(
         country: Country,
         navController: NavController,
     ) {
-        appInteractor.saveData(StorageKey.AREA_ID_KEY, country.id)
+        appInteractor.saveData(StorageKey.COUNTRY_ID_KEY, country.id)
 
         appInteractor.saveData(StorageKey.COUNTRY_NAME_KEY, country.name)
 

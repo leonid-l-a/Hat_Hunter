@@ -83,6 +83,8 @@ fun MainFilterScreen(
                         vm.clearByKey(StorageKey.AREA_ID_KEY)
                         vm.clearByKey(StorageKey.COUNTRY_NAME_KEY)
                         vm.clearByKey(StorageKey.REGION_NAME_KEY)
+                        vm.clearByKey(StorageKey.REGION_ID_KEY)
+                        vm.clearByKey(StorageKey.COUNTRY_ID_KEY)
                     }
                 )
 
@@ -159,16 +161,18 @@ fun MainFilterScreen(
                 ),
                 verticalArrangement = Arrangement.spacedBy(SpacerHeight8)
             ) {
-                FilterButton(
-                    modifier = Modifier
-                        .height(Height60)
-                        .fillMaxWidth(),
-                    textButton = stringResource(R.string.filter_apply),
-                    onClick = {
-                        searchVm.setShouldRepeatRequest(true)
-                        navController?.popBackStack()
-                    }
-                )
+                if (filterState.hasActiveFilters()) {
+                    FilterButton(
+                        modifier = Modifier
+                            .height(Height60)
+                            .fillMaxWidth(),
+                        textButton = stringResource(R.string.filter_apply),
+                        onClick = {
+                            searchVm.setShouldRepeatRequest(true)
+                            navController?.popBackStack()
+                        }
+                    )
+                }
 
                 if (filterState.hasActiveFilters()) {
                     FilterButton(

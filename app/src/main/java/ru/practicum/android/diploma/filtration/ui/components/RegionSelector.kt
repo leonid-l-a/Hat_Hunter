@@ -35,7 +35,8 @@ fun ShowErrorRegion() {
         )
         Text(
             text = stringResource(R.string.work_place_error),
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
     }
 }

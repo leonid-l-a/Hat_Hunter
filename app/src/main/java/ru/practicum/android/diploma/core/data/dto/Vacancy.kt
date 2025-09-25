@@ -4,5 +4,5 @@ data class Vacancy(
     val found: Int,
     val pages: Int,
     val page: Int,
-    val items: List<VacancyDetail>
+    val items: List<VacancyDetailDto>
 )

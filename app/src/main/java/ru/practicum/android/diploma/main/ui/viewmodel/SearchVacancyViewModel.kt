@@ -1,12 +1,12 @@
 package ru.practicum.android.diploma.main.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.core.domain.AppInteractor
+import ru.practicum.android.diploma.core.providers.ResourceProvider
 import ru.practicum.android.diploma.main.domain.interactor.SearchVacancyInteractor
 import ru.practicum.android.diploma.main.domain.model.FilterRequestData
 import ru.practicum.android.diploma.main.domain.model.VacancyDetailMainData
@@ -14,6 +14,7 @@ import ru.practicum.android.diploma.main.domain.model.VacancyMainData
 import ru.practicum.android.diploma.main.domain.state.Resource
 import ru.practicum.android.diploma.main.ui.mapper.FilterRequestMapper
 import ru.practicum.android.diploma.main.ui.model.FilterRequest
+import ru.practicum.android.diploma.main.ui.model.StatusContent
 import ru.practicum.android.diploma.main.ui.model.Vacancy
 import ru.practicum.android.diploma.main.ui.state.SearchState
 import ru.practicum.android.diploma.main.util.getFormatSalary
@@ -22,7 +23,8 @@ import ru.practicum.android.diploma.util.DebounceUtil
 class SearchVacancyViewModel(
 
     val searchVacancyInteractor: SearchVacancyInteractor,
-    val appInteractor: AppInteractor
+    val appInteractor: AppInteractor,
+    val provider: ResourceProvider
 
 ) : ViewModel() {
 
@@ -37,16 +39,17 @@ class SearchVacancyViewModel(
     private val _stateSearchVacancy = MutableStateFlow<SearchState>(value = SearchState.Default)
     val stateSearchVacancy = _stateSearchVacancy.asStateFlow()
 
-    private val _stateSearchFilter = MutableStateFlow<FilterRequest>(value = FilterRequest())
+    private val _stateSearchFilter = MutableStateFlow(value = FilterRequest())
     val stateSearchFilter = _stateSearchFilter.asStateFlow()
 
     private val _shouldRepeatRequest = MutableStateFlow(value = false)
     val shouldRepeatRequest = _shouldRepeatRequest.asStateFlow()
+    private val _vacancies = mutableListOf<Vacancy>()
+    private val vacancies: List<Vacancy> get() = _vacancies
 
     init {
         viewModelScope.launch {
             appInteractor.getAllDataWithNames().collect { data ->
-                Log.d("CHECK_vacancyRequest_data", data.toString())
                 _stateSearchFilter.value = FilterRequestMapper.toFilterRequest(data)
             }
         }
@@ -58,6 +61,7 @@ class SearchVacancyViewModel(
     )
 
     private fun resetPages() {
+        _vacancies.clear()
         currentPage = 1
         maxPages = 0
     }
@@ -78,16 +82,11 @@ class SearchVacancyViewModel(
                 )
             }
 
-            val area = stateSearchFilter.value.areaId
-            val industry = stateSearchFilter.value.industryId
-            val salary = stateSearchFilter.value.salaryId
-            val withSalary = stateSearchFilter.value.withSalary?.isNotEmpty()
-
             debounce.invoke {
                 val filter: FilterRequestData = FilterRequestMapper.toFilterRequestData(_stateSearchFilter.value)
                 searchVacancyInteractor.searchVacancy(expression, currentPage, filter)
                     .collect { vacancy ->
-                        searchState(vacancy)
+                        searchState(vacancy = vacancy)
                     }
             }
         } else {
@@ -102,7 +101,7 @@ class SearchVacancyViewModel(
                 id = it.id,
                 logoUrl = it.employer.logo ?: "",
                 industry = it.employer.name ?: "",
-                salary = it.salary.getFormatSalary(),
+                salary = it.salary.getFormatSalary(provider = provider),
                 city = it.city
             )
         }
@@ -124,10 +123,8 @@ class SearchVacancyViewModel(
                 if (!isLazyLoad) {
                     return
                 }
-            } else {
-                if (latestRequestText?.isNotEmpty() == true && !isLazyLoad) {
-                    resetPages()
-                }
+            } else if (latestRequestText?.isNotEmpty() == true && !isLazyLoad) {
+                resetPages()
             }
             if (expression.isEmpty()) {
                 resetPages()
@@ -166,11 +163,7 @@ class SearchVacancyViewModel(
                     maxPages = vacancy.pages
                 }
                 if (vacancy.items.isNotEmpty()) {
-                    var vacancies = map(vacancy.items)
-                    val state = stateSearchVacancy.value
-                    if (state is SearchState.Content) {
-                        vacancies = state.vacancy + vacancies
-                    }
+                    _vacancies.addAll(map(vacancy.items))
                     renderSearchState(
                         state = SearchState.Content(
                             vacancy = vacancies,
@@ -187,9 +180,24 @@ class SearchVacancyViewModel(
             }
 
             is Resource.Error -> {
-                renderSearchState(
-                    state = SearchState.Error
-                )
+                if (vacancy.isLazyError) {
+                    val lastState = stateSearchVacancy.value
+                    if (lastState is SearchState.Content) {
+                        lastState.countVacancy
+                        renderSearchState(
+                            state = SearchState.Content(
+                                vacancy = vacancies,
+                                countVacancy = lastState.countVacancy,
+                                isLoadingNextPage = false,
+                                statusContent = StatusContent(isLoading = true),
+                            )
+                        )
+                    }
+                } else {
+                    renderSearchState(
+                        state = SearchState.Error
+                    )
+                }
             }
         }
     }
@@ -203,6 +211,7 @@ class SearchVacancyViewModel(
     }
 
     fun repeatRequest() {
+        resetPages()
         searchRequestText(expression = latestRequestText ?: "", shouldRepeat = true)
     }
 }

@@ -8,10 +8,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.core.data.dto.VacancyDetail
+import ru.practicum.android.diploma.vacancy.domain.model.VacancyDetail
 import ru.practicum.android.diploma.vacancy.ui.viewmodel.VacancyViewModel
 
 @Composable
@@ -22,8 +24,15 @@ fun VacancyHeader(vacancy: VacancyDetail) {
         text = vacancy.name,
         style = MaterialTheme.typography.headlineLarge
     )
+
+    val salary = if (vacancy.getSalaryString().isDigitsOnly()) {
+        stringResource(R.string.salary_not_specified)
+    } else {
+        vacancy.getSalaryString()
+    }
+
     Text(
-        text = vacancy.salary.toDisplayString(),
+        text = salary,
         style = MaterialTheme.typography.headlineMedium
     )
 
@@ -33,21 +42,21 @@ fun VacancyHeader(vacancy: VacancyDetail) {
 @Composable
 fun ExperienceSection(vacancy: VacancyDetail) {
     Text(
-        stringResource(R.string.required_experience),
+        text = stringResource(R.string.required_experience),
         style = MaterialTheme.typography.headlineSmall
     )
 
     HorizontalDivider(thickness = 4.dp, color = Color.Transparent)
 
     Text(
-        vacancy.experience.name,
+        text = vacancy.experienceName,
         style = MaterialTheme.typography.bodyLarge
     )
 
     HorizontalDivider(thickness = 8.dp, color = Color.Transparent)
 
     Text(
-        vacancy.employment.name + ", " + stringResource(R.string.remote_work),
+        text = "${vacancy.employmentName}, ${stringResource(R.string.remote_work)}",
         style = MaterialTheme.typography.bodyLarge
     )
 
@@ -57,15 +66,15 @@ fun ExperienceSection(vacancy: VacancyDetail) {
 @Composable
 fun DescriptionSection(vacancy: VacancyDetail, viewModel: VacancyViewModel) {
     Text(
-        stringResource(R.string.description_section),
+        text = stringResource(R.string.description_section),
         style = MaterialTheme.typography.headlineMedium
     )
 
     HorizontalDivider(thickness = 16.dp, color = Color.Transparent)
 
-    val otherItems = createDescriptionItemsList(vacancy)
+    val context = LocalContext.current
+    val otherItems = createDescriptionItemsList(context, vacancy)
     val contactItems = createContactItemsList(vacancy)
-
     otherItems.forEach { (title, desc) ->
         if (desc.isNotEmpty()) {
             VacancyDescriptionItem(title = title, description = desc)
@@ -81,13 +90,13 @@ fun DescriptionSection(vacancy: VacancyDetail, viewModel: VacancyViewModel) {
 private fun ContactsSection(contactItems: List<Triple<String, Boolean?, Boolean>>, viewModel: VacancyViewModel) {
     if (contactItems.isNotEmpty()) {
         Text(
-            stringResource(R.string.contacts_section),
+            text = stringResource(R.string.contacts_section),
             style = MaterialTheme.typography.headlineSmall
         )
 
         HorizontalDivider(thickness = 4.dp, color = Color.Transparent)
 
-        contactItems.forEach { (value, isEmail) ->
+        contactItems.forEach { (value, isEmail, _) ->
             when (isEmail) {
                 true -> ContactItem(contact = value, isEmail = true, viewModel = viewModel)
                 false -> ContactItem(contact = value, isEmail = false, viewModel = viewModel)

@@ -29,7 +29,7 @@ class IndustriesRepositoryImpl(
 
     override suspend fun getIndustries(): Flow<Resource<Industries>> {
         return flow {
-            if (!networkUtil.isInternetAvailable(context)) {
+            if (!networkUtil.isInternetAvailable()) {
                 emit(
                     initError(storageCode = StorageResultCode.CLIENT_ERROR)
                 )

@@ -13,7 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.core.data.dto.vacancydetails.Salary
+import ru.practicum.android.diploma.util.getCurrencySymbolByDigitId
+import ru.practicum.android.diploma.vacancy.domain.model.VacancyDetail
 import ru.practicum.android.diploma.vacancy.ui.state.VacancyState
 import ru.practicum.android.diploma.vacancy.ui.viewmodel.VacancyViewModel
 
@@ -25,12 +26,17 @@ fun VacancyScreen(viewModel: VacancyViewModel, navController: NavController) {
     Scaffold(
         topBar = { TopBar(viewModel, navController, state) }
     ) { paddingValues ->
+        val columnModifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(horizontal = horizontalPadding)
+
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = horizontalPadding)
-                .verticalScroll(rememberScrollState())
+            modifier = if (state is VacancyState.Success) {
+                columnModifier.verticalScroll(rememberScrollState())
+            } else {
+                columnModifier
+            }
         ) {
             when (state) {
                 is VacancyState.Loading -> LoadingState()
@@ -44,19 +50,14 @@ fun VacancyScreen(viewModel: VacancyViewModel, navController: NavController) {
         }
     }
 }
-
-fun Salary.toDisplayString(): String {
+fun VacancyDetail.getSalaryString(): String {
     return when {
-        from != null && to != null -> {
-            "от $from до $to ${currency.orEmpty()}"
-        }
-
-        from != null ->
-            "от $from ${currency.orEmpty()}"
-
-        to != null ->
-            "до $to ${currency.orEmpty()}"
-
+        salaryFrom != null && salaryTo != null ->
+            "от $salaryFrom до $salaryTo ${salaryCurrency.getCurrencySymbolByDigitId()}"
+        salaryFrom != null ->
+            "от $salaryFrom ${salaryCurrency.getCurrencySymbolByDigitId()}"
+        salaryTo != null ->
+            "до $salaryTo ${salaryCurrency.getCurrencySymbolByDigitId()}"
         else ->
             R.string.salary_not_specified.toString()
     }

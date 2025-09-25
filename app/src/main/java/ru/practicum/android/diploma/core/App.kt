@@ -6,6 +6,7 @@ import org.koin.core.context.startKoin
 import ru.practicum.android.diploma.core.di.data.coreDataModule
 import ru.practicum.android.diploma.core.di.domain.coreInteractorModule
 import ru.practicum.android.diploma.core.di.domain.coreRepositoryModule
+import ru.practicum.android.diploma.core.di.providers.coreProviderModule
 import ru.practicum.android.diploma.core.di.viewmodel.coreViewModelModule
 import ru.practicum.android.diploma.favorites.di.data.favoriteDataModule
 import ru.practicum.android.diploma.favorites.di.domain.favoriteInteractorModule
@@ -47,6 +48,7 @@ class App : Application() {
                 filtrationDataModule,
                 filtrationInteractorModule,
                 filtrationViewModelModule,
+                coreProviderModule,
             )
         }
     }

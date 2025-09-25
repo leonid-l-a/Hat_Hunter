@@ -21,6 +21,6 @@ val filtrationViewModelModule = module {
         )
     }
     viewModel { WorkPlaceViewModel(get()) }
-    viewModel { CountrySelectionViewModel(get(), get()) }
-    viewModel { RegionSelectionViewModel(get(), get()) }
+    viewModel { CountrySelectionViewModel(get(), get(), get()) }
+    viewModel { RegionSelectionViewModel(get(), get(), get()) }
 }

@@ -8,7 +8,7 @@ import ru.practicum.android.diploma.core.data.dto.vacancydetails.Experience
 import ru.practicum.android.diploma.core.data.dto.vacancydetails.Salary
 import ru.practicum.android.diploma.core.data.dto.vacancydetails.Schedule
 
-data class VacancyDetail(
+data class VacancyDetailDto(
     val id: String,
     val name: String,
     val description: String,

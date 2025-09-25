@@ -24,9 +24,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.core.data.dto.VacancyDetail
 import ru.practicum.android.diploma.core.ui.theme.lightGray
 import ru.practicum.android.diploma.core.ui.theme.whiteNight
+import ru.practicum.android.diploma.vacancy.domain.model.VacancyDetail
 
 @Composable
 fun EmployerCard(vacancy: VacancyDetail) {
@@ -43,7 +43,7 @@ fun EmployerCard(vacancy: VacancyDetail) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = vacancy.employer.logo,
+                model = vacancy.employerLogo,
                 contentDescription = stringResource(R.string.employer_image),
                 modifier = Modifier.size(48.dp),
                 placeholder = painterResource(R.drawable.ic_employer_logo_placeholder),
@@ -56,17 +56,20 @@ fun EmployerCard(vacancy: VacancyDetail) {
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = vacancy.employer.name,
+                    text = vacancy.employerName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = whiteNight
                 )
                 Text(
-                    text = vacancy.address.city,
+                    text = vacancy.fullAddress
+                        .takeIf { it.isNotBlank() }
+                        ?: vacancy.areaName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = whiteNight
                 )
+
             }
         }
     }

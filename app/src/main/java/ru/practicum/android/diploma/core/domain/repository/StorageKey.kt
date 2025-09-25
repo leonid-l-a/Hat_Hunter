@@ -2,6 +2,8 @@ package ru.practicum.android.diploma.core.domain.repository
 
 enum class StorageKey(val key: String) {
     AREA_ID_KEY("area_id_key"),
+    REGION_ID_KEY("region_id_key"),
+    COUNTRY_ID_KEY("country_id_key"),
     REGION_NAME_KEY("area_name_key"),
     COUNTRY_NAME_KEY("country_name_key"),
     SALARY_ID_KEY("salary_id_key"),

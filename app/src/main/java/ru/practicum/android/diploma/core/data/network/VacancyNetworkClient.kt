@@ -95,7 +95,7 @@ class VacancyNetworkClient(
     suspend fun getVacancy(id: String): VacancyDetailResponse =
         safeApiCall {
             VacancyDetailResponse(
-                vacancyDetail = apiService.getVacancy(id)
+                vacancyDetailDto = apiService.getVacancy(id)
             )
         }
 }

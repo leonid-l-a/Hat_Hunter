@@ -11,7 +11,7 @@ import androidx.annotation.RequiresPermission
  *
  * This class provides method to check internet availability.
  */
-class NetworkUtil {
+class NetworkUtil(private val context: Context) {
 
     /**
      * Retrieves the network capabilities of the currently active network.
@@ -25,7 +25,7 @@ class NetworkUtil {
      * @return The [NetworkCapabilities] of the active network, or `null` if there is no active network.
      */
     @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
-    private fun getNetworkCapabilities(context: Context): NetworkCapabilities? {
+    private fun getNetworkCapabilities(): NetworkCapabilities? {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -45,8 +45,8 @@ class NetworkUtil {
      * @return `true` if an internet connection is available and validated, `false` otherwise.
      */
     @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
-    fun isInternetAvailable(context: Context): Boolean {
-        val capabilities = getNetworkCapabilities(context)
+    fun isInternetAvailable(): Boolean {
+        val capabilities = getNetworkCapabilities()
 
         return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true &&
             capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)

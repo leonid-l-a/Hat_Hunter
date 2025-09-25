@@ -58,6 +58,7 @@ fun RegionSelectionScreen(
         ) {
             SearchFilterItems(
                 text = searchText,
+                placeholder = stringResource(R.string.search_region_placeholder),
                 onSearchHandler = { query ->
                     setSearchText(query)
                     viewModel.onSearchQueryChanged(query)

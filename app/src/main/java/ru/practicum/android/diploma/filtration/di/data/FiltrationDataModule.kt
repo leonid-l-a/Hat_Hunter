@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.filtration.di.data
 
 import org.koin.dsl.module
+import ru.practicum.android.diploma.filtration.data.mapper.AreaMapper
 import ru.practicum.android.diploma.filtration.data.repository.AreaRepositoryImplementation
 import ru.practicum.android.diploma.filtration.data.repository.IndustriesRepositoryImpl
 import ru.practicum.android.diploma.filtration.domain.repository.AreaRepository
@@ -8,7 +9,7 @@ import ru.practicum.android.diploma.filtration.domain.repository.IndustriesRepos
 
 val filtrationDataModule = module {
     single<AreaRepository> {
-        AreaRepositoryImplementation(get())
+        AreaRepositoryImplementation(get(), get())
     }
 
     single<IndustriesRepository> {
@@ -18,4 +19,6 @@ val filtrationDataModule = module {
             networkClient = get()
         )
     }
+
+    single<AreaMapper> { AreaMapper() }
 }

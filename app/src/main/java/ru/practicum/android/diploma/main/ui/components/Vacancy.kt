@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -66,7 +65,6 @@ fun VacancyItem(
                 .build(),
             placeholder = painterResource(R.drawable.item_placeholder),
             contentDescription = vacancy.name,
-            contentScale = ContentScale.Crop,
         )
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -96,7 +94,7 @@ fun ShowVacancyList(
     isLoadingNextPage: Boolean = false,
     onClick: (String) -> Unit = {},
     onLoadNextPage: () -> Unit = {},
-    diffCount: Int = 5
+    diffCount: Int = 5,
 ) {
     if (vacancyList.isEmpty()) {
         return
@@ -110,7 +108,6 @@ fun ShowVacancyList(
             lastVisibleItemIndex != null && lastVisibleItemIndex >= totalItemsCount - diffCount && !isLoadingNextPage
         }
     }
-
     LaunchedEffect(shouldLoadNext) {
         if (shouldLoadNext) {
             onLoadNextPage()

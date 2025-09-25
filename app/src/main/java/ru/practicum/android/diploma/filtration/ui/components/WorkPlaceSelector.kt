@@ -18,9 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.ui.components.FilterItem
+import ru.practicum.android.diploma.core.ui.theme.ApplicationTheme
 
 @Composable
 private fun ActionIcon(checked: Boolean, modifier: Modifier = Modifier) {
@@ -79,21 +82,59 @@ fun WorkPlaceSelector(
             modifier = Modifier.padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            FilterItem(
-                labelText = countryLabel.takeIf { !it.isNullOrBlank() } ?: stringResource(R.string.country),
+            WorkPlaceFilterItem(
+                text = stringResource(R.string.country),
+                value = countryLabel ?: "",
                 checked = countryChecked,
-                isMainField = true,
                 onClick = { onCountryClick() },
                 onClear = onCountryClear
-            ) { checked -> ActionIcon(checked) }
+            )
 
-            FilterItem(
-                labelText = regionLabel.takeIf { !it.isNullOrBlank() } ?: stringResource(R.string.region),
+            WorkPlaceFilterItem(
+                text = stringResource(R.string.region),
+                value = regionLabel ?: "",
                 checked = regionChecked,
-                isMainField = true,
                 onClick = { onRegionClick() },
                 onClear = onRegionClear
-            ) { checked -> ActionIcon(checked) }
+            )
         }
+    }
+}
+
+@Composable
+private fun WorkPlaceFilterItem(
+    text: String,
+    value: String,
+    checked: Boolean,
+    onClick: (String?) -> Unit,
+    onClear: () -> Unit
+) {
+    FilterItem(
+        labelText = text,
+        labelValue = value,
+        checked = checked,
+        isMainField = true,
+        onClick = onClick,
+        onClear = onClear
+    ) { isChecked ->
+        ActionIcon(isChecked)
+    }
+}
+
+@Preview
+@Composable
+fun WorkPlacePreview() {
+    ApplicationTheme {
+        WorkPlaceSelector(
+            countryLabel = null,
+            regionLabel = null,
+            countryChecked = true,
+            regionChecked = true,
+            onCountryClick = {},
+            onRegionClick = {},
+            onCountryClear = {},
+            onRegionClear = {},
+            navController = rememberNavController()
+        ) { }
     }
 }

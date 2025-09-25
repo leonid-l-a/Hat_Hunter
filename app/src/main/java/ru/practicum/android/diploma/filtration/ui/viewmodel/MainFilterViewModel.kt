@@ -34,6 +34,7 @@ class MainFilterViewModel(
     }
 
     fun saveSalary(salary: String) {
+        val salary = salary.filter { it.isDigit() }
         if (salary.isNotEmpty()) {
             if (salary == latestSalary) {
                 return

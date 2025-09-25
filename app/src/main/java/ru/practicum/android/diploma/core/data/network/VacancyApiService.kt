@@ -8,7 +8,7 @@ import ru.practicum.android.diploma.core.data.dto.FilterAreasResponse
 import ru.practicum.android.diploma.core.data.dto.FilterIndustryDetail
 import ru.practicum.android.diploma.core.data.dto.FilterIndustryResponse
 import ru.practicum.android.diploma.core.data.dto.Vacancy
-import ru.practicum.android.diploma.core.data.dto.VacancyDetail
+import ru.practicum.android.diploma.core.data.dto.VacancyDetailDto
 import ru.practicum.android.diploma.core.data.dto.VacancyDetailResponse
 import ru.practicum.android.diploma.core.data.dto.VacancyResponse
 
@@ -88,5 +88,5 @@ interface VacancyApiService {
     @GET("vacancies/{id}")
     suspend fun getVacancy(
         @Path("id") id: String
-    ): VacancyDetail
+    ): VacancyDetailDto
 }

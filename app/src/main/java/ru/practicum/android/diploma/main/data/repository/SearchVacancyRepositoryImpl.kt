@@ -1,7 +1,6 @@
 package ru.practicum.android.diploma.main.data.repository
 
 import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.practicum.android.diploma.core.data.dto.VacancyRequest
@@ -26,9 +25,9 @@ class SearchVacancyRepositoryImpl(
         filterMap: FilterRequestData
     ): Flow<Resource<VacancyMainData>> =
         flow {
-            if (!networkUtil.isInternetAvailable(context)) {
+            if (!networkUtil.isInternetAvailable()) {
                 emit(
-                    Resource.Error()
+                    Resource.Error(isLazyError = page > 1)
                 )
             } else {
                 val vacancyRequest = VacancyRequest(
@@ -40,7 +39,6 @@ class SearchVacancyRepositoryImpl(
                     salary = filterMap.salaryId?.toInt(),
                     onlyWithSalary = filterMap.withSalary?.toBoolean() == true
                 )
-                Log.d("CHECK_vacancyRequest", vacancyRequest.toString())
                 val networkResponse = networkClient.getVacancies(vacancyRequest)
 
                 when (networkResponse.resultCode) {

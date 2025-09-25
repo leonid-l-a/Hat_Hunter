@@ -18,29 +18,41 @@ class WorkPlaceViewModel(
     private val _regionName = MutableStateFlow("")
     val regionName = _regionName.asStateFlow()
 
-    private val _areaId = MutableStateFlow<String?>(null)
-    val areaId = _areaId.asStateFlow()
+    private val _countryId = MutableStateFlow<String?>(null)
+    val countryId = _countryId.asStateFlow()
+
+    private val _regionId = MutableStateFlow<String?>(null)
+    val regionId = _regionId.asStateFlow()
 
     init {
         viewModelScope.launch {
             appInteractor.getAllDataWithNames().collect {
                 val country = appInteractor.getData(StorageKey.COUNTRY_NAME_KEY) ?: ""
                 val region = appInteractor.getData(StorageKey.REGION_NAME_KEY) ?: ""
-                val area = appInteractor.getData(StorageKey.AREA_ID_KEY)
-
+                val countryId = appInteractor.getData(StorageKey.COUNTRY_ID_KEY) ?: ""
+                val regionId = appInteractor.getData(StorageKey.REGION_ID_KEY) ?: ""
                 _countryName.value = country
                 _regionName.value = region
-                _areaId.value = area
+                _countryId.value = countryId
+                _regionId.value = regionId
             }
-
         }
     }
 
     fun clearCountry() {
-        appInteractor.saveData(StorageKey.COUNTRY_NAME_KEY, "")
+        appInteractor.clearByKey(StorageKey.COUNTRY_NAME_KEY)
+        if (_regionName.value.isBlank()) {
+            appInteractor.clearByKey(StorageKey.AREA_ID_KEY)
+        }
+        appInteractor.clearByKey(StorageKey.REGION_NAME_KEY)
+        appInteractor.clearByKey(StorageKey.COUNTRY_ID_KEY)
     }
 
     fun clearRegion() {
-        appInteractor.saveData(StorageKey.REGION_NAME_KEY, "")
+        appInteractor.clearByKey(StorageKey.REGION_NAME_KEY)
+        if (_countryName.value.isBlank()) {
+            appInteractor.clearByKey(StorageKey.AREA_ID_KEY)
+        }
+        appInteractor.clearByKey(StorageKey.REGION_ID_KEY)
     }
 }

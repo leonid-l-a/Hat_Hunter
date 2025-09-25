@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import ru.practicum.android.diploma.core.domain.repository.StorageKey
 import ru.practicum.android.diploma.filtration.domain.model.FilterStorage
@@ -13,14 +12,14 @@ class AppStorage(
     val sharedPrefs: SharedPreferences,
 ) {
     private var _storageState = MutableStateFlow(FilterStorage())
-    val storageState = _storageState.asStateFlow()
 
     private fun getMapWithKeys(): Map<String, String?> {
-        val area = getStorageByKey(StorageKey.AREA_ID_KEY)
+        val country = getStorageByKey(StorageKey.COUNTRY_ID_KEY)
+        val region = getStorageByKey(StorageKey.REGION_ID_KEY)
+        val area = if (region.isNullOrBlank()) country else region
         val salary = getStorageByKey(StorageKey.SALARY_ID_KEY)
         val onlyWithSalary = getStorageByKey(StorageKey.ONLY_WITH_SALARY_KEY)
         val industry = getStorageByKey(StorageKey.INDUSTRY_ID_KEY)
-
         return mapOf(
             StorageKey.AREA_ID_KEY.key to area,
             StorageKey.SALARY_ID_KEY.key to salary,
@@ -32,9 +31,11 @@ class AppStorage(
     private fun clearArea(): FilterStorage {
         sharedPrefs
             .edit {
-                remove(StorageKey.AREA_ID_KEY.key)
+                remove(StorageKey.REGION_ID_KEY.key)
+                remove(StorageKey.COUNTRY_ID_KEY.key)
                 remove(StorageKey.REGION_NAME_KEY.key)
                 remove(StorageKey.COUNTRY_NAME_KEY.key)
+                remove(StorageKey.AREA_ID_KEY.key)
             }
         return _storageState.value.copy(
             areaId = "",
@@ -88,7 +89,6 @@ class AppStorage(
         val value = data.toString()
         saveStorageByKey(key.key, value)
         val newStorage = when (key) {
-            StorageKey.AREA_ID_KEY -> _storageState.value.copy(areaId = value)
             StorageKey.REGION_NAME_KEY -> _storageState.value.copy(regionValue = value)
             StorageKey.COUNTRY_NAME_KEY -> _storageState.value.copy(countryValue = value)
             StorageKey.SALARY_ID_KEY -> _storageState.value.copy(salaryId = value)
@@ -96,6 +96,17 @@ class AppStorage(
             StorageKey.INDUSTRY_ID_KEY -> _storageState.value.copy(industryId = value)
             StorageKey.INDUSTRY_NAME_KEY -> _storageState.value.copy(industryValue = value)
             StorageKey.ONLY_WITH_SALARY_KEY -> _storageState.value.copy(withSalary = value)
+            StorageKey.REGION_ID_KEY -> _storageState.value.copy(regionId = value, areaId = value)
+            StorageKey.COUNTRY_ID_KEY -> {
+                if (_storageState.value.regionId.isEmpty()) {
+                    _storageState.value.copy(countryId = value, areaId = value)
+                } else {
+                    _storageState.value.copy(countryId = value)
+                }
+            }
+
+            StorageKey.AREA_ID_KEY -> _storageState.value.copy(areaId = value)
+
         }
         _storageState.value = newStorage
     }
@@ -111,17 +122,23 @@ class AppStorage(
     }
 
     fun getDataWithNames(): Flow<FilterStorage> {
-        val area = getStorageByKey(StorageKey.AREA_ID_KEY)
+        val country = getStorageByKey(StorageKey.COUNTRY_ID_KEY)
+        val region = getStorageByKey(StorageKey.REGION_ID_KEY)
+        val area = if (region.isNullOrBlank()) country else region
         val salary = getStorageByKey(StorageKey.SALARY_NAME_KEY)
         val onlyWithSalary = getStorageByKey(StorageKey.ONLY_WITH_SALARY_KEY)
         val industry = getStorageByKey(StorageKey.INDUSTRY_ID_KEY)
         val industryValue = getStorageByKey(StorageKey.INDUSTRY_NAME_KEY)
+        val countryValue = getStorageByKey(StorageKey.COUNTRY_NAME_KEY)
+        val regionValue = getStorageByKey(StorageKey.REGION_NAME_KEY)
         val newStorage = _storageState.value.copy(
             industryValue = industryValue ?: "",
             industryId = industry ?: "",
             areaId = area ?: "",
             salaryValue = salary ?: "",
-            withSalary = onlyWithSalary ?: ""
+            withSalary = onlyWithSalary ?: "",
+            countryValue = countryValue ?: "",
+            regionValue = regionValue ?: ""
         )
         _storageState.value = newStorage
         return _storageState
@@ -129,7 +146,8 @@ class AppStorage(
 
     fun clearByKey(key: StorageKey) {
         val newStorage = when (key) {
-            StorageKey.AREA_ID_KEY, StorageKey.COUNTRY_NAME_KEY, StorageKey.REGION_NAME_KEY -> {
+            StorageKey.AREA_ID_KEY, StorageKey.COUNTRY_NAME_KEY, StorageKey.REGION_NAME_KEY,
+            StorageKey.COUNTRY_ID_KEY, StorageKey.REGION_ID_KEY, -> {
                 clearArea()
             }
 
@@ -155,6 +173,8 @@ class AppStorage(
             }
         val newStorage = _storageState.value.copy(
             areaId = "",
+            regionId = "",
+            countryId = "",
             regionValue = "",
             countryValue = "",
             industryId = "",
